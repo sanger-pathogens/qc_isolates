@@ -26,10 +26,15 @@ def printHelp() {
 ========================================================================================
 */
 
+include { validateManifest } from './modules/validate_manifest.nf'
+
 //
 // SUBWORKFLOWS
 //
 
+include { MANIFEST_PARSE } from './subworkflows/manifest_parse.nf'
+
+include { QC_MAGS } from './assorted-sub-workflows/qc_mags/qc_mags.nf'
 
 /*
 ========================================================================================
@@ -43,4 +48,14 @@ workflow {
         exit 0
     }
 
+    manifest = Channel.fromPath(
+        validateManifest(params.manifest)
+    )
+    MANIFEST_PARSE(manifest)
+
+    QC_MAGS(MANIFEST_PARSE.out.mag_dirs)
+}
+
+workflow.onComplete {
+        NextflowTool.summary(workflow, params, log)
 }
