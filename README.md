@@ -10,29 +10,32 @@ QC MAGs is a nextflow pipeline that assesses the quality of Metagenome Assembled
 
 ## Pipeline summary
 
-The pipeline runs a number of QC tools to classify the bins and predict contamination levels for binned MAGs (fasta format). 
+The pipeline runs a number of QC tools to classify the bins and predict contamination levels for binned MAGs (fasta format).
 
 In its simplest usage, **QC MAGs** takes a manifest (CSV; see [Generating a manifest](#generating-a-manifest)), and paths to databases for several tools as input. It then runs the following steps on the MAG bins (`fasta` files) within per-sample directories provided in the manifest:
 
 1. **gtdbtk classify_wf**: The MAGs are classified using steps detailed in the [gtdbtk docs](https://ecogenomics.github.io/GTDBTk/commands/classify_wf.html). The `ani_screen` step is skipped.
 2. **checkm2 and GUNC**: [CheckM2](https://github.com/chklovski/CheckM2) uses machine learning models to predict the completeness and contamination of genomic bins (independent of their taxonomic classification). [GUNC](https://github.com/grp-bork/gunc) is also run to check for chimerism and contamination.
-3. **MDMCleaner**: [MDMCleaner](https://github.com/KIT-IBG-5/mdmcleaner) contamination-aware pipeline for reliable contig classification of metagenome assembled (MAG).  Sequences that are less than 1000 bases long are removed from the resulting filtered/decontaminated fastas using [seqkit](https://bioinf.shenwei.me/seqkit/).
+3. **MDMCleaner**: [MDMCleaner](https://github.com/KIT-IBG-5/mdmcleaner) contamination-aware pipeline for reliable contig classification of metagenome assembled (MAG). Sequences that are less than 1000 bases long are removed from the resulting filtered/decontaminated fastas using [seqkit](https://bioinf.shenwei.me/seqkit/).
 4. **checkm2 and GUNC**: The same checkm2 and GUNC commands (stage 2) are run on the seqkit fasta outputs.
-5. **Reporting** A summary CSV report is created that combines the summary files of checkm2, gtdbtk and GUNC runs (both before and after decontamination with MDMCleaner) 
+5. **Reporting** A summary CSV report is created that combines the summary files of checkm2, gtdbtk and GUNC runs (both before and after decontamination with MDMCleaner)
 
 ## Getting started
 
 For example pipeline input, please see [Generating a manifest](#generating-a-manifest).
 
 To run the pipeline on the Sanger HPC as a module replace `nextflow run main.nf` with the name of the tool. For instance, to see a help message:
+
 ```
 module load qc_mags
 qc_mags --help
-``` 
+```
 
 To run the pipeline from source (this repository):
+
 1.  Clone the repository.
-2.  Run with `docker`, use the path to the  `-profile docker` option:
+2.  Run with `docker`, use the path to the `-profile docker` option:
+
     ```
     nextflow run main.nf \
         -profile docker \
@@ -45,7 +48,7 @@ To run the pipeline from source (this repository):
 
     :warning: The path provided to `--gtdbtk_db` must be an absolute filepath.
 
-    Other profiles are also supported (`docker`,  `singularity`).  
+    Other profiles are also supported (`docker`, `singularity`).  
     :warning: If no profile is specified the pipeline will run with a Sanger HPC-specific configuration.
 
     See [usage](#usage) for all available pipeline options.
@@ -54,35 +57,35 @@ To run the pipeline from source (this repository):
 
 The CSV manifest provided via the `--manifest` option should have the following format:
 
-| ID | mags_dir |
-|----|----------|
+| ID        | mags_dir                                                  |
+| --------- | --------------------------------------------------------- |
 | Sample ID | Directory containing binned MAG assemblies (fasta format) |
 
 ## Usage
 
 ```
- Database options 
+ Database options
       --checkm2_db
             default: /data/pam/software/checkm2_db/uniref100.KO.1.dmnd
             Path to checkm2 diamond database file
-      
+
       --gunc_db
             default: /data/pam/software/gunc/GTDB/gunc_db_gtdb95.dmnd
             Path to GUNC diamond database file
-      
+
       --mdmcleaner_db
             default: /data/pam/software/mdmcleaner/v1
             Path to MDMCleaner database directory
-      
+
       --gtdbtk_db
             default: /data/pam/software/GTDBTk/release226
             Path to gtdbtk database directory
-      
+
 -----------------------------------------------------------------
- Logging options 
+ Logging options
       --monochrome_logs
             default: false
             Should logs appear in plain ASCII
-      
+
 -----------------------------------------------------------------
 ```
