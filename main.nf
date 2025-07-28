@@ -53,8 +53,6 @@ workflow {
     )
     MANIFEST_PARSE(manifest)
 
-    // MANIFEST_PARSE.out.fastas.view()
-
     QC_MAGS(MANIFEST_PARSE.out.fastas)
 }
 
