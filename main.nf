@@ -53,7 +53,9 @@ workflow {
     )
     MANIFEST_PARSE(manifest)
 
-    QC_MAGS(MANIFEST_PARSE.out.mag_dirs)
+    // MANIFEST_PARSE.out.fastas.view()
+
+    QC_MAGS(MANIFEST_PARSE.out.fastas)
 }
 
 workflow.onComplete {
