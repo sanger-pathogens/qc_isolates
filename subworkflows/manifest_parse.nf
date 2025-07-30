@@ -11,18 +11,18 @@ workflow MANIFEST_PARSE {
         .ifEmpty { exit 1, "File is empty / Cannot find file at ${manifest}" }
         .splitCsv(header:true, strip:true, sep:',')
         .map { row -> parse_row(row) }
-        .set { mag_dirs }
+        .set { fastas }
 
     emit:
-    mag_dirs
+    fastas
 }
 
 def parse_row(HashMap row) {
     def meta = [:]
-    def mags_dir = null
+    def fastas = null
 
     meta.ID = row.ID
-    mags_dir = file(row.mags_dir)
+    fastas = file("${row.mags_dir}/*${params.fasta_ext}")
 
-    return [meta, mags_dir]
+    return [meta, fastas]
 }
