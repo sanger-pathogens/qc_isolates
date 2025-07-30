@@ -21,7 +21,7 @@ flake8:
 
 .pipeline_deploy_to_farm:
   variables:
-    FARM_FILE_SED: '[main.nf]="s/nextflow +run +(.|main.nf)/${FARM_NAME}/" [nextflow.config]="s/\\{\\{${FARM_NEXTFLOW_CONFIG_VERSION_PLACEHOLDER}\\}\\}/${CI_COMMIT_REF_NAME}/" [nextflow.config]="s/\\{\\{pipeline_name\\}\\}/${FARM_NAME}/" [nextflow.config]="s/\\{\\{pipeline_url\\}\\}/${CI_PROJECT_URL}/"'
+    FARM_FILE_SED: "[main.nf]='s/nextflow +run +(.|main.nf)/${FARM_NAME}/' [nextflow.config]='s/\\{\\{${FARM_NEXTFLOW_CONFIG_VERSION_PLACEHOLDER}\\}\\}/${CI_COMMIT_REF_NAME}/' [nextflow.config]='s/\\{\\{pipeline_name\\}\\}/${FARM_NAME}/' [nextflow.config]='s/\\{\\{pipeline_url\\}\\}/${CI_PROJECT_URL}/'"
 #    FARM_NAME: "put-your-chosen-module-name-here"
 
 #     The check_scan_results job will add up the number of vulnerabilities found in each category (high, medium, etc.)
