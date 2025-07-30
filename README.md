@@ -17,7 +17,7 @@ In its simplest usage, **QC MAGs** takes a manifest (CSV; see [Generating a mani
 1. **gtdbtk classify_wf**: The MAGs are classified using steps detailed in the [gtdbtk docs](https://ecogenomics.github.io/GTDBTk/commands/classify_wf.html). The `ani_screen` step is skipped.
 2. **checkm2 and GUNC**: [CheckM2](https://github.com/chklovski/CheckM2) uses machine learning models to predict the completeness and contamination of genomic bins (independent of their taxonomic classification). [GUNC](https://github.com/grp-bork/gunc) is also run to check for chimerism and contamination.
 3. **MDMCleaner**: [MDMCleaner](https://github.com/KIT-IBG-5/mdmcleaner) contamination-aware pipeline for reliable contig classification of metagenome assembled (MAG). Sequences that are less than 1000 bases long are removed from the resulting filtered/decontaminated fastas using [seqkit](https://bioinf.shenwei.me/seqkit/).
-4. **checkm2 and GUNC**: The same checkm2 and GUNC commands (stage 2) are run on the seqkit fasta outputs.
+4. **checkm2 and GUNC**: The same checkm2 and GUNC commands (stage 2) are run again on the contigs cleaned by MDMCleaner and filtered by seqkit.
 5. **Reporting** A summary CSV report is created that combines the summary files of checkm2, gtdbtk and GUNC runs (both before and after decontamination with MDMCleaner)
 
 ## Getting started
