@@ -1,5 +1,5 @@
 {
-  "pipeline": "Base schema",
+  "pipeline": "qc_mags",
   "params": {
     "Logging options": {
       "monochrome_logs": {

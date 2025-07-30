@@ -1,128 +1,121 @@
-# A template for Nextflow pipeline projects
+# QC MAGs
 
-This template will provide a skeleton project for a Nextflow pipeline to be deployed to the farm, according to the
-conventions developed by the PaM Informatics team.
+[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A521.04.0-23aa62.svg?labelColor=000000)](https://www.nextflow.io/)
+[![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
+[![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
+
+QC MAGs is a nextflow pipeline that assesses the quality of Metagenome Assembled Genomes (MAGs).
 
 [[_TOC_]]
 
-## Template contents
+## Pipeline summary
 
-### Nextflow Pipeline
+The pipeline runs a number of QC tools to classify the bins and predict contamination levels for binned MAGs (fasta format).
 
-#### Wrapper script
+In its simplest usage, **QC MAGs** takes a manifest (CSV; see [Generating a manifest](#generating-a-manifest)), and paths to databases for several tools as input. It then runs the following steps on the MAG bins (`fasta` files) within per-sample directories provided in the manifest:
 
-The `nextflow-template.sh` script provides a wrapper which will run the nextflow pipeline. This file must have the same
-name as the git project (plus `.sh`).
+1. **gtdbtk classify_wf**: The MAGs are classified using steps detailed in the [gtdbtk docs](https://ecogenomics.github.io/GTDBTk/commands/classify_wf.html). The `ani_screen` step is skipped.
+2. **checkm2 and GUNC**: [CheckM2](https://github.com/chklovski/CheckM2) uses machine learning models to predict the completeness and contamination of genomic bins (independent of their taxonomic classification). [GUNC](https://github.com/grp-bork/gunc) is also run to check for chimerism and contamination.
+3. **MDMCleaner**: [MDMCleaner](https://github.com/KIT-IBG-5/mdmcleaner) contamination-aware pipeline for reliable contig classification of metagenome assembled (MAG). Sequences that are less than 1000 bases long are removed from the resulting filtered/decontaminated fastas using [seqkit](https://bioinf.shenwei.me/seqkit/).
+4. **checkm2 and GUNC**: The same checkm2 and GUNC commands (stage 2) are run again on the contigs cleaned by MDMCleaner and filtered by seqkit.
+5. **Reporting** A summary CSV report is created that combines the summary files of checkm2, gtdbtk and GUNC runs (both before and after decontamination with MDMCleaner)
 
-#### "Hello world" nf pipeline.
+## Getting started
 
-The `main.nf` and `nextflow.config` files are included to provide a "hello world" pipeline.
+For example pipeline input, please see [Generating a manifest](#generating-a-manifest).
 
-#### Module template
-
-A module template file `module.template` is provided. This includes placeholders of the form `{{placeholder_tag}}`
-which are replaced in the deployed module file, according to the
-[CI/CD pipeline configuration](https://gitlab.internal.sanger.ac.uk/sanger-pathogens/templates/ci-templates/-/blob/master/README.md?ref_type=heads#farm22pipeline-deployyml)
-
-### CI/CD pipeline
-
-The standard PaM Informatics nextflow deployment pipeline is included from the
-[CI/CD templates repo](https://gitlab.internal.sanger.ac.uk/sanger-pathogens/templates/ci-templates/).
-
-This includes checks to ensure that the pre-commit hooks have been run, some standard GitLab security scans, and
-deployment on tagging.
-
-#### Deployment
-
-A test deployment will be done whenever a tag starting with `t` is created; a prod deployment is done whenever a
-semantic version tag staring with `v` (e.g. v1.2.3) is created.
-
-Note that the `.gitlab-ci.yml` file has a section that disables deployment, just to prevent the template itself from
-being deployed to the farm. This section is marked by a comment, and should be deleted when the template is used for a
-real project that is intended to be deployed.
-
-Deployment includes:
-
-- Copying the wrapper script to the farm, removing the `.sh`, and making it executable.
-- Using the module template to create a module file on the farm.
-- Copying all other files that do _not_ start with `.` to the farm; this will include the Nextflow files and any other scripts etc. that have been added to the project.
-
-The deployment path is the value of the `FARM_PATH` variable in the deployment job, which should already be set to
-the standard "custom install" path we use for dev/prod deployments.
-
-### Workflow
-
-Some standard files are provides to help with development workflow.
-
-#### .gitignore file
-
-This contains common patterns matching files that should be kept out of git. This can help to keep secrets out of the
-repo, as well as clutter created by IDEs etc. Remember that secrets pushed to git by mistake will remain in the
-history, even if deleted!
-
-#### pre-commit configuration
-
-A recommended pre-commit config is included (`.pre-commit.yml`).
-
-Pre-commit hooks run before each commit automatically. We use them to auto-format code and to check for linting errors,
-for example. W/o running the hooks, the CI pipeline may fail.
-
-First, install pre-commit command itself if you don't have it already:
+To run the pipeline on the Sanger HPC as a module replace `nextflow run main.nf` with the name of the tool. For instance, to see a help message:
 
 ```
-pip install pre-commit
+module load qc_mags
+qc_mags --help
 ```
 
-Then, run the following from the repository's folder to install the pre-commit hooks:
+To run the pipeline from source (this repository):
+
+1.  Clone the repository.
+2.  Run with `docker`, use the path to the `-profile docker` option:
+
+    ```
+    nextflow run main.nf \
+        -profile docker \
+        --manifest test_data/manifest.csv \
+        --gtdbtk_db /absolute/path/to/gtdbtk_db
+        --checkm2_db path/to/checkm2_db \
+        --gunc_db path/to/gunc_db \
+        --mdmcleaner_db path/to/mdmcleaner_db
+    ```
+
+    :warning: The path provided to `--gtdbtk_db` must be an absolute filepath.
+
+    Other profiles are also supported (`docker`, `singularity`).  
+    :warning: If no profile is specified the pipeline will run with a Sanger HPC-specific configuration.
+
+    See [usage](#usage) for all available pipeline options.
+
+## Generating a manifest
+
+The CSV manifest provided via the `--manifest` option should have the following format:
+
+| ID        | mags_dir                                                  |
+| --------- | --------------------------------------------------------- |
+| Sample ID | Directory containing binned MAG assemblies (fasta format) |
+
+## Report configuration
+
+A configuration file can be supplied to the `--report_config` option to customise the final (per-sample) report generated by the pipeline. In particular, it allows (per-tool) customization of the identity column (to join the tool report tables together) and extract particular columns from these reports. The following tool names are currently mandatory: `GTDBTK`, `GUNC`, `CHECKM2` (NOTE: tool name must be uppercase). In the following example config block, we select 2 columns (`classification` and `closest_genome_reference`) to extract from the GTDB-Tk report and to use `user_genome` as the identity column:
 
 ```
-pre-commit install
+"GTDBTK": {
+    "id_column": "user_genome",
+    "keep_columns": [
+        "classification",
+        "closest_genome_reference"
+    ]
+}
 ```
 
-##### .talismanrc file
+Please refer to the default [`report_config.json`](./assorted-sub-workflows/qc_mags/assets/report_config.json) for expected JSON structure.
 
-This file configures talisman, which is included in the pre-commit config. See the
-[talisman documentation](https://github.com/thoughtworks/talisman/blob/main/README.md) to see how to deal with false
-positives.
+NOTE: In addition to columns derived from the tool reports, the script includes 4 columns `preqc_genome_name`, `postqc_genome_name`, `sample_or_strain_name` and `genome_status`. These are currently all derived from filenames (at some point).
 
-##### Running pre-commit hooks manually
+| column                | description                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| preqc_genome_name     | Name of the input fasta file minus extension                                             |
+| post_genome_name      | Name of the fasta file output after processing with `seqkit` minus extension             |
+| sample_or_strain_name | Name of the fasta file up to the last `_` character                                      |
+| genome_status         | `mag` if the fasta file contains the string `mag` (lower/uppercase), `isolate` otherwise |
 
-[pre-commit provides various options](https://pre-commit.com/#pre-commit-run) for running hooks manually; for example,
-so run all hooks on all files:
+## Usage
 
 ```
-pre-commit run --all-files
+ Database options
+      --checkm2_db
+            default: /data/pam/software/checkm2_db/uniref100.KO.1.dmnd
+            Path to checkm2 diamond database file
+      --gunc_db
+            default: /data/pam/software/gunc/GTDB/gunc_db_gtdb95.dmnd
+            Path to GUNC diamond database file
+      --mdmcleaner_db
+            default: /data/pam/software/mdmcleaner/v1
+            Path to MDMCleaner database directory
+      --gtdbtk_db
+            default: /data/pam/software/GTDBTk/release226
+            Path to gtdbtk database directory
+-----------------------------------------------------------------
+ Other options
+      --fasta_ext
+            default: fa
+            Rename fasta output files using the given extension
+      --report_config
+            default: ./assorted-sub-workflows/qc_mags/assets/report_config.json
+            Configuration file (JSON) to customise summary report
+-----------------------------------------------------------------
+ Logging options
+      --monochrome_logs
+            default: false
+            Should logs appear in plain ASCII
+
+-----------------------------------------------------------------
+
 ```
-
-## How to use this template
-
-### Create a new project from the template
-
-Start by creating a new project for your nextflow pipeline from the template
-
-- In gitlab, click the blue "New project button"
-- On the next screen, click on "Create from template"
-- On the next screen, select the "Group" tab
-- On the Group tab, next to "nextflow-template", click the blue "Use this template" button
-- Fill in the form on the next screen
-
-### Required changes in the project
-
-The following manual changes _must_ be made in your new project
-
-- Rename `nextflow-template.sh` to match your enw project name (plus `.sh` on the end).
-- Edit the manifest in `nextflow.config` to replace the placeholder name, description etc.
-- In `.gitlab-ci.yml`, delete the section which disables the deployment (see the comments in this file to identify the section you must delete).
-- If you will be using python, uncomment the sections in `.pre-commit.yaml` for python-related hooks (see the comments in this file); and make corresponding changes in `.gitlab-ci.yml` to re-enable the jobs that check the python-related hooks (again, see the comments).
-
-### Add your pipeline code
-
-When the steps above have been completed, you should have a working project that will deploy a module to the farm (test
-or prod, depending on the tag you use); but the pipeline provided will still be the "hello world" example.
-
-You can now edit `main.nf` and `nextflow.config` to add a real pipeline, and add any additional scripts or other files
-that are needed. The standard CI/CD piepline will copy all files that do not start with a `.` to the farm; it can
-be configured easily to rename and change modes of file, and to make substitutions of text within files if required.
-See the [CI/CD pipeline documentation](https://gitlab.internal.sanger.ac.uk/sanger-pathogens/templates/ci-templates/-/blob/master/README.md?ref_type=heads#farm22pipeline-deployyml)
-
-Remember that if additional executables are provided, these should be added to the `module.template` file.
