@@ -1,6 +1,6 @@
 include:
   - project: "sanger-pathogens/templates/ci-templates"
-    ref: "fix/variables_in_security_scans_template"
+    ref: "$CI_CD_TEMPLATES_LATEST_STABLE"
     file: "Pipelines/PaM-Info-Nextflow.gitlab-ci.yml"
 
 # If your project contains python code, delete the sections below which disable black, isort and flake8
