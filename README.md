@@ -1,24 +1,24 @@
-# QC MAGs
+# QC Isolates
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A521.04.0-23aa62.svg?labelColor=000000)](https://www.nextflow.io/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
-QC MAGs is a nextflow pipeline that assesses the quality of Metagenome Assembled Genomes (MAGs).
+NOTE: This README is currently in draft form - it is in the process of being adapted from the QC MAGs pipeline.
+
+QC Isolates is a nextflow pipeline that assesses the quality of Isolate Genomes. It is not suitable for Metagenome-Assembled Genomes (MAGs), for those the pipeline QC MAGs should instead be applied. These have been differentiated primarily to avoid running metagenomic decontamination on known isolates.
 
 [[_TOC_]]
 
 ## Pipeline summary
 
-The pipeline runs a number of QC tools to classify the bins and predict contamination levels for binned MAGs (fasta format).
+The pipeline runs QC tools to classify the genomes and predict completeness and contamination levels.
 
-In its simplest usage, **QC MAGs** takes a manifest (CSV; see [Generating a manifest](#generating-a-manifest)), and paths to databases for several tools as input. It then runs the following steps on the MAG bins (`fasta` files) within per-sample directories provided in the manifest:
+As input, **QC Isolates** takes a manifest (CSV; see [Generating a manifest](#generating-a-manifest)), and paths to databases for several tools. It then runs the following steps on the genome (`fasta` files) within per-sample directories provided in the manifest:
 
-1. **gtdbtk classify_wf**: The MAGs are classified using steps detailed in the [gtdbtk docs](https://ecogenomics.github.io/GTDBTk/commands/classify_wf.html). The `ani_screen` step is skipped.
+1. **gtdbtk classify_wf**: The genomes are classified using steps detailed in the [gtdbtk docs](https://ecogenomics.github.io/GTDBTk/commands/classify_wf.html). The `ani_screen` step is skipped.
 2. **checkm2 and GUNC**: [CheckM2](https://github.com/chklovski/CheckM2) uses machine learning models to predict the completeness and contamination of genomic bins (independent of their taxonomic classification). [GUNC](https://github.com/grp-bork/gunc) is also run to check for chimerism and contamination.
-3. **MDMCleaner**: [MDMCleaner](https://github.com/KIT-IBG-5/mdmcleaner) contamination-aware pipeline for reliable contig classification of metagenome assembled (MAG). Sequences that are less than 1000 bases long are removed from the resulting filtered/decontaminated fastas using [seqkit](https://bioinf.shenwei.me/seqkit/).
-4. **checkm2 and GUNC**: The same checkm2 and GUNC commands (stage 2) are run again on the contigs cleaned by MDMCleaner and filtered by seqkit.
-5. **Reporting** A summary CSV report is created that combines the summary files of checkm2, gtdbtk and GUNC runs (both before and after decontamination with MDMCleaner)
+3. **Reporting** A summary CSV report is created that combines the summary files of checkm2, gtdbtk and GUNC runs
 
 ## Getting started
 
@@ -27,8 +27,8 @@ For example pipeline input, please see [Generating a manifest](#generating-a-man
 To run the pipeline on the Sanger HPC as a module replace `nextflow run main.nf` with the name of the tool. For instance, to see a help message:
 
 ```
-module load qc_mags
-qc_mags --help
+module load qc_isolates
+qc_isolates --help
 ```
 
 To run the pipeline from source (this repository):
@@ -96,9 +96,6 @@ NOTE: In addition to columns derived from the tool reports, the script includes 
       --gunc_db
             default: /data/pam/software/gunc/GTDB/gunc_db_gtdb95.dmnd
             Path to GUNC diamond database file
-      --mdmcleaner_db
-            default: /data/pam/software/mdmcleaner/v1
-            Path to MDMCleaner database directory
       --gtdbtk_db
             default: /data/pam/software/GTDBTk/release226
             Path to gtdbtk database directory
