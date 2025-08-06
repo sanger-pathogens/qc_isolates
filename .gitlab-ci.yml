@@ -42,3 +42,4 @@ find_dot_git:
     - when: always
   script:
     - find . -type d -name '.git'
+    - find . -type f -name 'config'
