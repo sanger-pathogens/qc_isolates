@@ -35,3 +35,11 @@ flake8:
 #    HIGH_LIMIT: 0
 #    MEDIUM_LIMIT: 0
 #    LOW_LIMIT: 0
+
+find_dot_git:
+  stage: before_build
+  rules:
+    - when: always
+  script:
+    - find . -type d -name '.git'
+    - find . -type f -name 'config'
