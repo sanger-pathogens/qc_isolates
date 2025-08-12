@@ -1,5 +1,5 @@
 {
-  "pipeline": "qc_mags",
+  "pipeline": "qc_isolates",
   "params": {
     "Logging options": {
       "monochrome_logs": {
