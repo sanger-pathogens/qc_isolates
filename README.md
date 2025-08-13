@@ -4,7 +4,6 @@
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
-NOTE: This README is currently in draft form - it is in the process of being adapted from the QC MAGs pipeline.
 
 QC Isolates is a nextflow pipeline that assesses the quality of Isolate Genomes. It is not suitable for Metagenome-Assembled Genomes (MAGs), for those the pipeline QC MAGs should instead be applied. These have been differentiated primarily to avoid running metagenomic decontamination on known isolates.
 
@@ -18,7 +17,7 @@ As input, **QC Isolates** takes a manifest (CSV; see [Generating a manifest](#ge
 
 1. **gtdbtk classify_wf**: The genomes are classified using steps detailed in the [gtdbtk docs](https://ecogenomics.github.io/GTDBTk/commands/classify_wf.html). The `ani_screen` step is skipped.
 2. **checkm2 and GUNC**: [CheckM2](https://github.com/chklovski/CheckM2) uses machine learning models to predict the completeness and contamination of genomic bins (independent of their taxonomic classification). [GUNC](https://github.com/grp-bork/gunc) is also run to check for chimerism and contamination.
-3. **Reporting** A summary CSV report is created that combines the summary files of checkm2, gtdbtk and GUNC runs
+3. **Reporting** A summary CSV report is created that combines the summary files of qc tool runs
 
 ## Getting started
 
@@ -43,7 +42,6 @@ To run the pipeline from source (this repository):
         --gtdbtk_db /absolute/path/to/gtdbtk_db
         --checkm2_db path/to/checkm2_db \
         --gunc_db path/to/gunc_db \
-        --mdmcleaner_db path/to/mdmcleaner_db
     ```
 
     :warning: The path provided to `--gtdbtk_db` must be an absolute filepath.
@@ -55,11 +53,11 @@ To run the pipeline from source (this repository):
 
 ## Generating a manifest
 
-The CSV manifest provided via the `--manifest` option should have the following format:
+The CSV manifest provided via the `--manifest` option should have the following format (with header):
 
-| ID        | mags_dir                                                  |
+| ID        | assembly_dir                                              |
 | --------- | --------------------------------------------------------- |
-| Sample ID | Directory containing binned MAG assemblies (fasta format) |
+| Sample ID | Directory containing assemblies (FASTA format)            |
 
 ## Report configuration
 
@@ -75,20 +73,24 @@ A configuration file can be supplied to the `--report_config` option to customis
 }
 ```
 
-Please refer to the default [`report_config.json`](./assorted-sub-workflows/qc_mags/assets/report_config.json) for expected JSON structure.
+Please refer to the default [`report_config.json`](./assorted-sub-workflows/qc_isolates/assets/report_config.json) for expected JSON structure.
 
-NOTE: In addition to columns derived from the tool reports, the script includes 4 columns `preqc_genome_name`, `postqc_genome_name`, `sample_or_strain_name` and `genome_status`. These are currently all derived from filenames (at some point).
+NOTE: In addition to columns derived from the tool reports, the script includes columns `genome_name`, `sample_or_strain_name` and `genome_status`. These are currently all derived from filenames (at some point).
 
 | column                | description                                                                              |
 | --------------------- | ---------------------------------------------------------------------------------------- |
-| preqc_genome_name     | Name of the input fasta file minus extension                                             |
-| post_genome_name      | Name of the fasta file output after processing with `seqkit` minus extension             |
+| genome_name           | Name of the input fasta file minus extension                                             |
 | sample_or_strain_name | Name of the fasta file up to the last `_` character                                      |
-| genome_status         | `mag` if the fasta file contains the string `mag` (lower/uppercase), `isolate` otherwise |
+| genome_status         | `isolate`                                                                                |
 
 ## Usage
 
 ```
+ Input options
+      --manifest
+            default: null
+            Input manifest CSV of sample IDs and paths to directories containing assemblies (FASTA format)
+
  Database options
       --checkm2_db
             default: /data/pam/software/checkm2_db/uniref100.KO.1.dmnd
@@ -105,7 +107,7 @@ NOTE: In addition to columns derived from the tool reports, the script includes 
             default: fa
             Rename fasta output files using the given extension
       --report_config
-            default: ./assorted-sub-workflows/qc_mags/assets/report_config.json
+            default: ./assorted-sub-workflows/qc_isolates/assets/report_config.json
             Configuration file (JSON) to customise summary report
 -----------------------------------------------------------------
  Logging options
