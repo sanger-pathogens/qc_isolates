@@ -1,6 +1,12 @@
 {
   "pipeline": "qc_isolates",
   "params": {
+    "Input options": {
+      "manifest": {
+        "default": "null",
+        "help_text": "Input manifest CSV of sample IDs and paths to directories containing binned MAG assemblies (FASTA format)"
+      }
+    },
     "Logging options": {
       "monochrome_logs": {
         "default": "false",
