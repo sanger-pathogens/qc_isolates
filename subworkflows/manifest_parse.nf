@@ -24,7 +24,7 @@ def parse_row(HashMap row) {
     String fasta_ext = params.fasta_ext.replaceAll(/^\./, '')
 
     meta.ID = row.ID
-    fastas = file("${row.mags_dir}/*.${fasta_ext}")
+    fastas = file("${row.assembly_dir}/*.${fasta_ext}")
 
     return [meta, fastas]
 }

@@ -10,10 +10,10 @@ def validateManifest(manifestFile) {
         def header = lines[0].split(',')*.trim()
         def idIndex = header.indexOf('ID')
         if (idIndex == -1) throw new Exception("Manifest must contain an 'ID' column")
-        def magsIndex = header.indexOf('mags_dir')
-        if (magsIndex == -1) throw new Exception("Manifest must contain an 'mags_dir' column")
+        def dirIndex = header.indexOf('assembly_dir')
+        if (dirIndex == -1) throw new Exception("Manifest must contain an 'assembly_dir' column")
 
-        def unexpectedColumns = header.findAll { !['ID', 'mags_dir'].contains(it) }
+        def unexpectedColumns = header.findAll { !['ID', 'assembly_dir'].contains(it) }
         if (unexpectedColumns) {
             log.warn("The following unexpected columns were found in the manifest: ${unexpectedColumns}")
         }
@@ -22,11 +22,11 @@ def validateManifest(manifestFile) {
         lines.drop(1).eachWithIndex { line, lineNum ->
             def values = line.split(',')*.trim()
             def id = values[idIndex]
-            def mags_dir = new File(values[magsIndex])
+            def assembly_dir = new File(values[dirIndex])
 
             if (!id) throw new Exception("Missing ID at line ${lineNum+1}")
-            if (!mags_dir) throw new Exception("Missing Directory at line ${lineNum+1}")
-            if (!mags_dir.exists()) throw new Exception("Directory does not exist at the given path '${mags_dir}' at line ${lineNum+1}")
+            if (!assembly_dir) throw new Exception("Missing Directory at line ${lineNum+1}")
+            if (!assembly_dir.exists()) throw new Exception("Directory does not exist at the given path '${assembly_dir}' at line ${lineNum+1}")
         }
 
         // Return manifest path on success
