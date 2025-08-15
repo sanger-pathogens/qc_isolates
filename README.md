@@ -4,7 +4,6 @@
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
-
 QC Isolates is a nextflow pipeline that assesses the quality of Isolate Genomes. It is not suitable for Metagenome-Assembled Genomes (MAGs), for those the pipeline QC MAGs should instead be applied. These have been differentiated primarily to avoid running metagenomic decontamination on known isolates.
 
 [[_TOC_]]
@@ -55,9 +54,9 @@ To run the pipeline from source (this repository):
 
 The CSV manifest provided via the `--manifest` option should have the following format (with header):
 
-| ID        | assembly_dir                                              |
-| --------- | --------------------------------------------------------- |
-| Sample ID | Directory containing assemblies (FASTA format)            |
+| ID        | assembly_dir                                   |
+| --------- | ---------------------------------------------- |
+| Sample ID | Directory containing assemblies (FASTA format) |
 
 ## Report configuration
 
@@ -77,11 +76,11 @@ Please refer to the default [`report_config.json`](./assorted-sub-workflows/qc_i
 
 NOTE: In addition to columns derived from the tool reports, the script includes columns `genome_name`, `sample_or_strain_name` and `genome_status`. These are currently all derived from filenames (at some point).
 
-| column                | description                                                                              |
-| --------------------- | ---------------------------------------------------------------------------------------- |
-| genome_name           | Name of the input fasta file minus extension                                             |
-| sample_or_strain_name | Name of the fasta file up to the last `_` character                                      |
-| genome_status         | `isolate`                                                                                |
+| column                | description                                         |
+| --------------------- | --------------------------------------------------- |
+| genome_name           | Name of the input fasta file minus extension        |
+| sample_or_strain_name | Name of the fasta file up to the last `_` character |
+| genome_status         | `isolate`                                           |
 
 ## Usage
 
