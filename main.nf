@@ -16,7 +16,7 @@ NextflowTool.commandLineParams(workflow.commandLine, log, params.monochrome_logs
 
 def printHelp() {
     NextflowTool.help_message("${workflow.ProjectDir}/schema.json", 
-                               ["${workflow.ProjectDir}/assorted-sub-workflows/qc_mags/schema.json"],
+                               ["${workflow.ProjectDir}/assorted-sub-workflows/qc_isolates/schema.json"],
     params.monochrome_logs, log)
 }
 
@@ -34,7 +34,7 @@ include { validateManifest } from './modules/validate_manifest.nf'
 
 include { MANIFEST_PARSE } from './subworkflows/manifest_parse.nf'
 
-include { QC_MAGS } from './assorted-sub-workflows/qc_mags/qc_mags.nf'
+include { QC_ISOLATES } from './assorted-sub-workflows/qc_isolates/qc_isolates.nf'
 
 /*
 ========================================================================================
@@ -53,7 +53,7 @@ workflow {
     )
     MANIFEST_PARSE(manifest)
 
-    QC_MAGS(MANIFEST_PARSE.out.fastas)
+    QC_ISOLATES(MANIFEST_PARSE.out.fastas)
 }
 
 workflow.onComplete {
