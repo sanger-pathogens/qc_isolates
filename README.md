@@ -14,7 +14,7 @@ The pipeline runs QC tools to classify the genomes and predict completeness and 
 
 As input, **QC Isolates** takes a manifest (CSV; see [Generating a manifest](#generating-a-manifest)), and paths to databases for several tools. It then runs the following steps on the genome (`fasta` files) within per-sample directories provided in the manifest:
 
-1. **gtdbtk classify_wf**: The genomes are classified using steps detailed in the [gtdbtk docs](https://ecogenomics.github.io/GTDBTk/commands/classify_wf.html). The `ani_screen` step is skipped.
+1. **gtdbtk classify_wf and QUAST**: The genomes are classified using steps detailed in the [gtdbtk docs](https://ecogenomics.github.io/GTDBTk/commands/classify_wf.html). The `ani_screen` step is skipped. [QUAST](https://github.com/ablab/quast) evaluates genome/metagenome assemblies by computing various metrics.
 2. **checkm2 and GUNC**: [CheckM2](https://github.com/chklovski/CheckM2) uses machine learning models to predict the completeness and contamination of genomic bins (independent of their taxonomic classification). [GUNC](https://github.com/grp-bork/gunc) is also run to check for chimerism and contamination.
 3. **Reporting** A summary CSV report is created that combines the summary files of qc tool runs
 
