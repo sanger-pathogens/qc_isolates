@@ -109,13 +109,11 @@ NOTE: In addition to columns derived from the tool reports, the script includes 
             default: ./assorted-sub-workflows/qc_isolates/assets/report_config.json
             Configuration file (JSON) to customise summary report
       --temp_file_storage
-            default: "null",
-            Specify a directory where GTDBTk can store temporary files during processing (see GTDB-Tk runtime for more information). Options are '/dev/shm' and '/tmp'.
+            default: "/tmp",
+            Specify a directory where GTDB-Tk can store temporary files during processing. Options are '/tmp', '/dev/shm' or 'null' (write to memory). See [GTDB-Tk runtime](#gdtbk-runtime) for more details.
       --temp_space":
             default: "30GB",
             "Request a specific amount of temporary working space to reserve for GTDB-T (see GTDB-Tk runtime for more information)."
-
-
       --min_contig
             default: 1000
             Threshold for removing contigs below set value
