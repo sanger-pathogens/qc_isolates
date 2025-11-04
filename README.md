@@ -15,7 +15,7 @@ The pipeline runs QC tools to classify the genomes and predict completeness and 
 As input, **QC Isolates** takes a manifest (CSV; see [Generating a manifest](#generating-a-manifest)), and paths to databases for several tools. It then runs the following steps on the genome (`fasta` files) within per-sample directories provided in the manifest:
 
 1. **gtdbtk classify_wf and QUAST**: The genomes are classified using steps detailed in the [gtdbtk docs](https://ecogenomics.github.io/GTDBTk/commands/classify_wf.html). The `ani_screen` step is skipped. [QUAST](https://github.com/ablab/quast) evaluates genome/metagenome assemblies by computing various metrics.
-2. **checkm2 and GUNC**: [CheckM2](https://github.com/chklovski/CheckM2) uses machine learning models to predict the completeness and contamination of genomic bins (independent of their taxonomic classification). [GUNC](https://github.com/grp-bork/gunc) is also run to check for chimerism and contamination.
+2. **SeqKit, checkm2 and GUNC**: [CheckM2](https://github.com/chklovski/CheckM2) uses machine learning models to predict the completeness and contamination of genomic bins (independent of their taxonomic classification). [GUNC](https://github.com/grp-bork/gunc) is also run to check for chimerism and contamination. [SeqKit](https://github.com/shenwei356/seqkit) can be used to remove small contigs.
 3. **Reporting** A summary CSV report is created that combines the summary files of qc tool runs
 
 ## Getting started
@@ -116,6 +116,12 @@ NOTE: In addition to columns derived from the tool reports, the script includes 
             "Request a specific amount of temporary working space to reserve for GTDB-T (see GTDB-Tk runtime for more information)."
 
 
+      --min_contig
+            default: 1000
+            Threshold for removing contigs below set value
+      --keep_small_contigs
+            default: false
+            Sets min_contig parameter to 0
 -----------------------------------------------------------------
  Logging options
       --monochrome_logs
