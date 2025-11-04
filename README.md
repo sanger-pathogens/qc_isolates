@@ -108,12 +108,6 @@ NOTE: In addition to columns derived from the tool reports, the script includes 
       --report_config
             default: ./assorted-sub-workflows/qc_isolates/assets/report_config.json
             Configuration file (JSON) to customise summary report
-      --min_contig
-            default: 1000
-            Threshold for removing contigs below set value
-      --keep_small_contigs
-            default: false
-            Sets min_contig parameter to 0
       --temp_file_storage
             default: "null",
             Specify a directory where GTDBTk can store temporary files during processing (see GTDB-Tk runtime for more information). Options are '/dev/shm' and '/tmp'.
