@@ -4,6 +4,9 @@
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
+> [!CAUTION]
+> The version 1.0.0 has the `--min_contig` default as 1000 and therefore will filter out contigs shorter than 1000bp _by default_. If you are using v1.0.0 and do not wish for this behaviour please use the flag `--keep_small_contigs` to explicitly turn this feature off. This flag is deprecated for all other versions as `--min_contig` is set to zero by default in all other versions (including v1.0.1).
+
 QC Isolates is a nextflow pipeline that assesses the quality of Isolate Genomes. It is not suitable for Metagenome-Assembled Genomes (MAGs), for those the pipeline QC MAGs should instead be applied. These have been differentiated primarily to avoid running metagenomic decontamination on known isolates.
 
 [[_TOC_]]
@@ -113,10 +116,13 @@ NOTE: In addition to columns derived from the tool reports, the script includes 
             Specify a directory where GTDB-Tk can store temporary files during processing. Options are '/tmp', '/dev/shm' or 'null' (write to memory). See GTDB-Tk runtime for more details.
       --temp_space":
             default: "30GB",
-            "Request a specific amount of temporary working space to reserve for GTDB-Tk (see GTDB-Tk runtime for more information)."
+            "Request a specific amount of temporary working space to reserve for GTDB-Tk. This option only applies to space booked on `/tmp` and NOT `/dev/shm`. See [GTDB-Tk runtime](#gtdbtk-runtime) for more details. (see GTDB-Tk runtime for more information)."
       --min_contig
-            default: 1000
-            Threshold for removing contigs below set value
+            default: 0
+            Contigs below this value (length in bp) are removed and are not included in some calculations performed by QUAST. See QUAST documentation for details of which calculations are effected.
+            Note: in v1.0.0 alone this parameter is set to 1000 by default.
+
+*** The following flag is deprecated in all versions other than v1.0.0 ***
       --keep_small_contigs
             default: false
             Sets min_contig parameter to 0
@@ -132,5 +138,5 @@ NOTE: In addition to columns derived from the tool reports, the script includes 
 
 ### GTDB-Tk runtime
 
-- Runtime and memory can be reduced for GTDB-Tk classficiation by specifying the `--temp_file_storage` option with either `/tmp` or `/dev/shm`. Writing these files to disk instead of keeping everything in memory reduces peak RAM usage by up to 89% and can improve runtime by up to 10%. This often allows the job to run with a smaller memory request, meaning it can start faster on cluster schedulers.
-- If you know the size of your samples you can request a specific temp memory using `--temp_space <XX>GB`. This lets you reserve a specific amount of temporary memory/disk space. Note that due to a know bug reported in the farm documentation, request half the memory you require as LSF double-accounts /tmp use see [here](https://sanger-openstack.slack.com/archives/G0121LP6L9J/p1748614657196859).
+- Runtime and memory are reduced for GTDB-Tk classficiation with the `--temp_file_storage` option, which enables GTDBTk to write intermediate files to a specified location on disk rather than using RAM. This can reduce peak RAM usage by up to 89% and can improve runtime by up to 10%, often allowing the job to run with a smaller memory request, meaning it can start faster on cluster schedulers. On the Sanger cluster this is best done utilising `/tmp` and is therefore the default, `/dev/shm` is another option but is not reservable with LSF and a less stable option. Adapt this option as necessary when running outside of the Sanger cluster.
+- If you want to configure reserved temporary storage to request with LSF (i.e. when using `--temp_file_storage /tmp`) you can do this by requesting an amount (in GB) with the option `--temp_space`. Typically you should request < 100 GB, and no more then 1000 GB, as larger requests may cause jobs to remain pending. Note that due to a known bug reported in the farm documentation, please request half the memory you require as LSF double-accounts /tmp use see [here](https://ssg-confluence.internal.sanger.ac.uk/spaces/FARM/pages/101361225/Useful+LSF+resources#UsefulLSFresources-Resources).
