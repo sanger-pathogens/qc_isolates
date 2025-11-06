@@ -4,6 +4,9 @@
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 
+> [!CAUTION]
+> The version 1.0.0 has the `--min_contig` default as 1000 and therefore will filter out contigs shorter than 1000bp _by default_. If you are using v1.0.0 and do not wish for this behaviour please use the flag `--keep_small_contigs` to explicitly turn this feature off. This flag is deprecated for all other versions as `--min_contig` is set to zero by default in all other versions (including v1.0.1).
+
 QC Isolates is a nextflow pipeline that assesses the quality of Isolate Genomes. It is not suitable for Metagenome-Assembled Genomes (MAGs), for those the pipeline QC MAGs should instead be applied. These have been differentiated primarily to avoid running metagenomic decontamination on known isolates.
 
 [[_TOC_]]
@@ -115,8 +118,11 @@ NOTE: In addition to columns derived from the tool reports, the script includes 
             default: "30GB",
             "Request a specific amount of temporary working space to reserve for GTDB-Tk (see GTDB-Tk runtime for more information)."
       --min_contig
-            default: 1000
+            default: 0
             Threshold for removing contigs below set value
+            Note: in v1.0.0 alone this parameter is set to 1000 by default.
+
+*** The following flag is deprecated in all versions other than v1.0.0 ***
       --keep_small_contigs
             default: false
             Sets min_contig parameter to 0
