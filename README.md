@@ -105,32 +105,32 @@ results/
 
 **Database options**
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
+| Option         | Type   | Default                                             | Description                                |
+| -------------- | ------ | --------------------------------------------------- | ------------------------------------------ |
 | `--checkm2_db` | `path` | `/data/pam/software/checkm2_db/uniref100.KO.1.dmnd` | Path to the CheckM2 Diamond database file. |
-| `--gunc_db` | `path` | `/data/pam/software/gunc/GTDB/gunc_db_gtdb95.dmnd` | Path to the GUNC Diamond database file. |
-| `--gtdbtk_db` | `path` | `/data/pam/software/GTDBTk/release226` | Path to the GTDBTk database directory. |
+| `--gunc_db`    | `path` | `/data/pam/software/gunc/GTDB/gunc_db_gtdb95.dmnd`  | Path to the GUNC Diamond database file.    |
+| `--gtdbtk_db`  | `path` | `/data/pam/software/GTDBTk/release226`              | Path to the GTDBTk database directory.     |
 
 ---
 
 **Other options**
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `--fasta_ext` | `string` | `fa` | File extension for output FASTA files. |
-| `--min_contig` | `integer` | `0` | Minimum contig length (bp). Contigs below this value are removed before QC metrics are calculated. |
-| `--report_config` | `path` | (bundled) | JSON configuration file to customise the summary report. |
-| `--temp_file_storage` | `string` | `/tmp` | Directory for GTDBTk temporary files. Options: `/tmp`, `/dev/shm`, or `null` (write to memory). |
-| `--temp_space` | `string` | `30GB` | Amount of temporary storage to reserve for GTDBTk jobs on the HPC. |
+| Option                | Type      | Default   | Description                                                                                        |
+| --------------------- | --------- | --------- | -------------------------------------------------------------------------------------------------- |
+| `--fasta_ext`         | `string`  | `fa`      | File extension for output FASTA files.                                                             |
+| `--min_contig`        | `integer` | `0`       | Minimum contig length (bp). Contigs below this value are removed before QC metrics are calculated. |
+| `--report_config`     | `path`    | (bundled) | JSON configuration file to customise the summary report.                                           |
+| `--temp_file_storage` | `string`  | `/tmp`    | Directory for GTDBTk temporary files. Options: `/tmp`, `/dev/shm`, or `null` (write to memory).    |
+| `--temp_space`        | `string`  | `30GB`    | Amount of temporary storage to reserve for GTDBTk jobs on the HPC.                                 |
 
 ---
 
 **Output options**
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `--outdir` | `path` | `./results` | Directory where results are written. |
-| `--monochrome_logs` | `boolean` | `false` | Output logs in plain ASCII. |
+| Option              | Type      | Default     | Description                          |
+| ------------------- | --------- | ----------- | ------------------------------------ |
+| `--outdir`          | `path`    | `./results` | Directory where results are written. |
+| `--monochrome_logs` | `boolean` | `false`     | Output logs in plain ASCII.          |
 
 ### Advanced usage
 
@@ -152,13 +152,13 @@ All software dependencies are containerised. The following databases must be ava
 
 ## Software versions
 
-| Software | Version | Image |
-| --- | --- | --- |
-| GTDBTk | — | `quay.io/biocontainers/gtdbtk:*` |
-| QUAST | — | `quay.io/biocontainers/quast:*` |
-| CheckM2 | — | `quay.io/biocontainers/checkm2:*` |
-| GUNC | — | `quay.io/biocontainers/gunc:*` |
-| seqkit | — | `quay.io/biocontainers/seqkit:*` |
+| Software | Version | Image                             |
+| -------- | ------- | --------------------------------- |
+| GTDBTk   | —       | `quay.io/biocontainers/gtdbtk:*`  |
+| QUAST    | —       | `quay.io/biocontainers/quast:*`   |
+| CheckM2  | —       | `quay.io/biocontainers/checkm2:*` |
+| GUNC     | —       | `quay.io/biocontainers/gunc:*`    |
+| seqkit   | —       | `quay.io/biocontainers/seqkit:*`  |
 
 See `assorted-sub-workflows/qc_isolates/modules/` for pinned container versions.
 
