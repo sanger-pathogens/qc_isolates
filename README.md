@@ -92,13 +92,19 @@ Results are written to `--outdir` (default: `./results`):
 ```
 results/
   gtdbtk/
-    <sample_ID>/                   # GTDBTk classification output
+    <sample_ID>_gtdbtk_summary.tsv    # GTDBTk taxonomic classification summary
   quast/
-    <sample_ID>/                   # QUAST assembly statistics
-  checkm2/                         # CheckM2 completeness/contamination reports
-  gunc/                            # GUNC chimerism reports
-  reports/
-    summary.csv                    # Combined QC and taxonomy summary
+    <sample_ID>_quast_report.tsv      # QUAST assembly statistics report
+  quast_summary/
+    <sample_ID>_quast_summary.tsv     # Summarised QUAST metrics
+  checkm2/
+    <sample_ID>_quality_report.tsv    # CheckM2 completeness/contamination report
+  gunc/
+    <sample_ID>_gunc.tsv              # GUNC chimerism/contamination report
+  seqkit/
+    <sample_ID>/                      # Length-filtered FASTA files (after --min_contig filtering)
+  report/
+    <sample_ID>_final_report.tsv      # Combined QC and taxonomy summary
 ```
 
 ### Parameters
