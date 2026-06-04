@@ -28,7 +28,7 @@ The pipeline performs the following steps:
 1. Clone this repository (including submodules):
 
    ```bash
-   git clone --recurse-submodules https://gitlab.internal.sanger.ac.uk/sanger-pathogens/pipelines/qc_isolates.git
+   git clone --recurse-submodules <repo-url>
    cd qc_isolates
    ```
 
