@@ -82,7 +82,7 @@ bsub -o output.o -e error.e -q oversubscribed -R "select[mem>4000] rusage[mem=40
 A CSV file with per-sample paths to directories containing isolate genome FASTA files. Run `qc_isolates --help` for the exact manifest format required by this pipeline version.
 
 ```
-ID,FASTA_DIR
+ID,assembly_dir
 sample1,/path/to/sample1/
 sample2,/path/to/sample2/
 ```
