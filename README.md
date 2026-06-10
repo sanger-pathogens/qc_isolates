@@ -150,11 +150,11 @@ results/
 
 #### GTDBTk temporary storage
 
-GTDBTk requires significant temporary disk space. By default `/tmp` is used. On the Sanger HPC, consider `/dev/shm` for faster I/O. For large datasets, ensure sufficient space is available or increase `--temp_space`.
+GTDBTk requires significant memory which can be reduced by using temporary disk space. By default `/tmp` is used, which is the best configuration for the Sanger HPC. On other machines you may wish to set `--temp_file_storage /dev/shm` for faster I/O, check with your administrators if unsure. Ensure enough space is available or set `--temp_space` appropriately.
 
 #### Minimum contig length
 
-Set `--min_contig` to a positive value (e.g. `500`) to remove short contigs from FASTA inputs before running QC. This can reduce contamination signals from fragmented assemblies.
+Set `--min_contig` to a positive value (e.g. `500`) to remove short contigs from FASTA inputs. This can reduce contamination signals from fragmented assemblies. However, be aware that GTDBTk and QUAST currently run _before_ short contig removal by seqkit (i.e. pre-filter) whilst GUNC and CheckM2 run _after_ seqkit (post-filter).
 
 ### Dependencies
 
@@ -181,7 +181,8 @@ See `assorted-sub-workflows/qc_isolates/modules/` for pinned container versions.
 - **GTDBTk fails with out-of-disk-space**: ensure the `--temp_file_storage` directory has sufficient space. On the Sanger HPC, use `/dev/shm` or a scratch directory.
 - **Database not found**: confirm all database paths exist and are accessible. Default Sanger HPC paths are pre-configured.
 - **Resuming a failed run**: add `-resume` to your command to restart from cached intermediate results.
-- For further help, check `.nextflow.log` and the per-process `.command.log` logs in the `work/` directory.
+
+For further help, check `.nextflow.log` and the per-process `.command.log` logs in the `work/` directory.
 
 Sanger users may find [this page](https://ssg-confluence.internal.sanger.ac.uk/spaces/PaMI/pages/181078206/General+pipeline+info#Generalpipelineinfo-Troubleshootingafailedpipelinerunandsendingabugreport) useful for troubleshooting Nextflow pipeline runs.
 
