@@ -15,8 +15,8 @@ QC Isolates is a Nextflow DSL2 pipeline for assessing the quality of bacterial i
 
 The pipeline performs the following steps:
 
-1. **Taxonomic classification** — GTDBTk `classify_wf` classifies each genome taxonomically (the `ani_screen` step is skipped); QUAST evaluates assembly statistics.
-2. **Quality assessment** — CheckM2 predicts completeness and contamination using machine-learning models; GUNC checks for chimerism and contamination; seqkit can optionally remove short contigs.
+1. **Taxonomic classification** — [GTDBTk](https://ecogenomics.github.io/GTDBTk) `classify_wf` classifies each genome taxonomically (the `ani_screen` step is skipped); [QUAST](https://github.com/ablab/quast) evaluates assembly statistics.
+2. **Quality assessment** — [CheckM2](https://github.com/chklovski/CheckM2) predicts completeness and contamination independently of their taxonomic classification using machine-learning models; [GUNC](https://github.com/grp-bork/gunc) checks for chimerism and contamination; [seqkit](https://github.com/shenwei356/seqkit) can optionally remove short contigs.
 3. **Reporting** — a summary CSV is produced combining QC metrics and GTDBTk classification results.
 
 ## Usage
