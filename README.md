@@ -111,6 +111,12 @@ results/
 
 ### Parameters
 
+**Input/ Output options**
+| Option | Type | Default | Description |
+| `--manifest` | `path` | null | Directory where results are written. |
+| `--outdir` | `path` | `./results` | Directory where results are written. |
+| `--fasta_ext` | `string` | `fa` | File extension for input and output FASTA files. |
+
 **Database options**
 
 | Option         | Type   | Default                                             | Description                                |
@@ -123,22 +129,22 @@ results/
 
 **Other options**
 
-| Option                | Type      | Default   | Description                                                                                        |
-| --------------------- | --------- | --------- | -------------------------------------------------------------------------------------------------- |
-| `--fasta_ext`         | `string`  | `fa`      | File extension for output FASTA files.                                                             |
-| `--min_contig`        | `integer` | `0`       | Minimum contig length (bp). Contigs below this value are removed before QC metrics are calculated. |
-| `--report_config`     | `path`    | (bundled) | JSON configuration file to customise the summary report.                                           |
-| `--temp_file_storage` | `string`  | `/tmp`    | Directory for GTDBTk temporary files. Options: `/tmp`, `/dev/shm`, or `null` (write to memory).    |
-| `--temp_space`        | `string`  | `30GB`    | Amount of temporary storage to reserve for GTDBTk jobs on the HPC.                                 |
+| Option                | Type      | Default                                                                                         | Description                                                                                     |
+| --------------------- | --------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `--min_contig`        | `integer` | `0`                                                                                             | Minimum contig length (bp). Contigs below this value are removed.                               |
+| `--report_config`     | `path`    | (bundled, [`report_config.json`](assorted-sub-workflows/qc_isolates/assets/report_config.json)) | JSON configuration file to customise the summary report.                                        |
+| `--temp_file_storage` | `string`  | `/tmp`                                                                                          | Directory for GTDBTk temporary files. Options: `/tmp`, `/dev/shm`, or `null` (write to memory). |
+| `--temp_space`        | `string`  | `30GB`                                                                                          | Amount of temporary storage to reserve for GTDBTk jobs on the HPC.                              |
 
 ---
 
-**Output options**
+**Logging options**
 
-| Option              | Type      | Default     | Description                          |
-| ------------------- | --------- | ----------- | ------------------------------------ |
-| `--outdir`          | `path`    | `./results` | Directory where results are written. |
-| `--monochrome_logs` | `boolean` | `false`     | Output logs in plain ASCII.          |
+| Option              | Type      | Default | Description                 |
+| ------------------- | --------- | ------- | --------------------------- |
+| `--monochrome_logs` | `boolean` | `false` | Output logs in plain ASCII. |
+
+:warning: If using v1.0.0 of the pipeline please ensure you look at the README for that version, the parameters and defaults differ (specifically by `--min_contig` default and a version-specific flag `--keep_small_contigs`).
 
 ### Advanced usage
 
