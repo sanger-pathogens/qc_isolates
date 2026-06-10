@@ -178,7 +178,7 @@ GTDBTk requires significant memory which can be reduced by using temporary disk 
 
 #### Minimum contig length
 
-Set `--min_contig` to a positive value (e.g. `500`) to remove short contigs from FASTA inputs. This can reduce contamination signals from fragmented assemblies. However, be aware that GTDBTk and QUAST currently run _before_ short contig removal by seqkit (i.e. pre-filter) whilst GUNC and CheckM2 run _after_ seqkit (post-filter).
+Set `--min_contig` to a positive value (e.g. `500`) to remove contigs with length shorter than the chosen value (in bp) from FASTA inputs. This can reduce contamination signals from fragmented assemblies. However, be aware that GTDBTk and QUAST currently run _before_ short contig removal by seqkit (i.e. pre-filter) whilst GUNC and CheckM2 run _after_ seqkit (post-filter).
 
 ### Dependencies
 
