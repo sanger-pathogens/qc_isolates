@@ -113,6 +113,7 @@ results/
 
 **Input/ Output options**
 | Option | Type | Default | Description |
+| -------------- | ------ | --------------------------------------------------- | ------------------------------------------ |
 | `--manifest` | `path` | null | Directory where results are written. |
 | `--outdir` | `path` | `./results` | Directory where results are written. |
 | `--fasta_ext` | `string` | `fa` | File extension for input and output FASTA files. |
